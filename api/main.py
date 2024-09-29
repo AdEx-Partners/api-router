@@ -7,8 +7,36 @@ app = FastAPI()
 
 # Load the JSON data
 data_path = os.path.join(os.path.dirname(__file__), '../data/website_backup.json')
-with open(data_path, 'r', encoding='utf-8') as f:
-    data = json.load(f)
+
+# Debugging function
+def load_json_file(path):
+    # Check if the file exists
+    if not os.path.exists(path):
+        raise RuntimeError("File not found")
+
+    # Check if the file is accessible
+    if not os.access(path, os.R_OK):
+        raise RuntimeError("File is not accessible")
+
+    try:
+        # Attempt to read the file content
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        raise RuntimeError(f"Error reading file: {e}")
+
+    try:
+        # Attempt to parse the JSON content
+        return json.loads(content)
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Invalid JSON format: {e}")
+
+try:
+    data = load_json_file(data_path)
+except RuntimeError as e:
+    # Log the error and raise an HTTP exception
+    print(f"Error loading JSON: {e}")
+    raise HTTPException(status_code=500, detail=str(e))
 
 # Configurable cap threshold
 CAP_THRESHOLD = 20000  # Number of words
