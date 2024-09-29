@@ -1,11 +1,13 @@
 from fastapi import FastAPI, HTTPException
 import json
+import os
 import re
 
 app = FastAPI()
 
 # Load the JSON data
-with open('static/website_backup.json', 'r', encoding='utf-8') as f:
+data_path = os.path.join(os.path.dirname(__file__), '../data/website_backup.json')
+with open(data_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 # Configurable cap threshold
