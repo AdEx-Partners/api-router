@@ -100,8 +100,8 @@ async def search_endpoint(search_type: str):
     total_words = sum(count_words(item.get('text', '')) for item in results)
     if total_words >= CAP_THRESHOLD:
         return {
-            "warning": f"CAPPED RESPONSE - {CAP_THRESHOLD} words limit reached. Be more specific to ensure all matches are returned in full.",
-            "results": results
+            "results": results,
+            "note": f"CAPPED RESPONSE - {CAP_THRESHOLD} words limit reached. Be more specific to ensure you receive the complete website contents matching your filter criteria.",
         }
 
     return {"results": results}
