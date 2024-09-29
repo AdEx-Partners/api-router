@@ -10,23 +10,16 @@ data_path = os.path.join(os.path.dirname(__file__), '../data/website_backup.json
 
 # Debugging function
 def load_json_file(path):
-    # Check if the file exists
     if not os.path.exists(path):
         raise RuntimeError("File not found")
-
-    # Check if the file is accessible
     if not os.access(path, os.R_OK):
         raise RuntimeError("File is not accessible")
-
     try:
-        # Attempt to read the file content
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
     except Exception as e:
         raise RuntimeError(f"Error reading file: {e}")
-
     try:
-        # Attempt to parse the JSON content
         return json.loads(content)
     except json.JSONDecodeError as e:
         raise RuntimeError(f"Invalid JSON format: {e}")
@@ -34,7 +27,6 @@ def load_json_file(path):
 try:
     data = load_json_file(data_path)
 except RuntimeError as e:
-    # Log the error and raise an HTTP exception
     print(f"Error loading JSON: {e}")
     raise HTTPException(status_code=500, detail=str(e))
 
@@ -48,8 +40,12 @@ def search(data, path_pattern=None, element=None, term_pattern=None):
     results = []
     path_regex = re.compile(path_pattern) if path_pattern else None
     term_regex = re.compile(term_pattern) if term_pattern else None
+    total_words = 0
 
     for item in data:
+        if total_words >= CAP_THRESHOLD:
+            break
+
         paths = extract_paths([item])
         if path_regex and not any(path_regex.search(path) for path in paths):
             continue
@@ -57,11 +53,14 @@ def search(data, path_pattern=None, element=None, term_pattern=None):
         if element and term_regex:
             if element in item and term_regex.search(item[element]):
                 results.append(item)
+                total_words += count_words(item.get('text', ''))
         elif not element and term_regex:
             if any(term_regex.search(str(value)) for value in item.values()):
                 results.append(item)
+                total_words += count_words(item.get('text', ''))
         elif not element and not term_regex:
             results.append(item)
+            total_words += count_words(item.get('text', ''))
 
     return results
 
@@ -97,11 +96,11 @@ async def search_endpoint(search_type: str):
 
     results = search(data, path_pattern, element, term_pattern)
 
-    # Check word count
+    # Check if the results were capped
     total_words = sum(count_words(item.get('text', '')) for item in results)
-    if total_words > CAP_THRESHOLD:
+    if total_words >= CAP_THRESHOLD:
         return {
-            "warning": f"CAPPED RESPONSE - {CAP_THRESHOLD} exceeded - be more specific to ensure all matches are returned in full",
+            "warning": f"CAPPED RESPONSE - {CAP_THRESHOLD} words limit reached. Be more specific to ensure all matches are returned in full.",
             "results": results
         }
 
