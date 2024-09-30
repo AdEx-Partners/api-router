@@ -35,7 +35,7 @@ CAP_THRESHOLD = 20000  # Number of words
 def count_words(text):
     return len(text.split())
 
-def search(data, path_pattern=None, term_pattern=None):
+def search(data, path_pattern=None, term_pattern=None, include_content=False):
     results = []
     path_regex = re.compile(path_pattern) if path_pattern else None
     term_regex = re.compile(term_pattern) if term_pattern else None
@@ -62,26 +62,30 @@ def search(data, path_pattern=None, term_pattern=None):
                     break
 
         if path_match or term_match:
-            results.append(item)
-            total_words += count_words(' '.join(e.get('text', '') for e in item['elements']))
+            if include_content:
+                results.append(item)
+                total_words += count_words(' '.join(e.get('text', '') for e in item['elements']))
+            else:
+                results.append({"page-url": item['page-url']})
 
     return results, path_matches, term_matches
 
 @app.get("/search")
 async def search_endpoint(
     path: Optional[str] = Query(None, description="Path pattern to search for"),
-    term: Optional[str] = Query(None, description="Term pattern to search for")
+    term: Optional[str] = Query(None, description="Term pattern to search for"),
+    include_content: bool = Query(False, description="Whether to include full content in the response")
 ):
     if not path and not term:
         raise HTTPException(status_code=400, detail="At least one of 'path' or 'term' must be specified.")
 
-    results, path_matches, term_matches = search(data, path, term)
+    results, path_matches, term_matches = search(data, path, term, include_content)
 
-    total_words = sum(count_words(' '.join(e.get('text', '') for e in item['elements'])) for item in results)
+    total_words = sum(count_words(' '.join(e.get('text', '') for e in item.get('elements', []))) for item in results)
     capped = total_words >= CAP_THRESHOLD
 
     response = {
-        "results": [{"page-url": item['page-url']} for item in results],
+        "results": results,
         "path_matches": path_matches,
         "term_matches": term_matches,
         "capped": capped
