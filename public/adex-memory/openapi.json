@@ -1,0 +1,224 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "AdExGPT Memory",
+      "version": "1.0.0",
+      "description": "Tool zum Speichern (Merken) von beliebiger Kontext-Infos zu einem Thema - bzw Abrufen (Erinnern) an diese. Jeweils zu einem Schlüssel/Keyword, mit dem Infos auch wieder abgerufen werden können. Die Kontext-Infos können so in unterschiedliche Chats gebracht werden, wenn Schlüssel/Keyword vollständig oder in Teilen bekannt. Falls Schlüssel/Keyword nicht exakt bekannt: mit operationId `GetAllKeys` können vorab alle Schlüsseln eingesehen werden, zu denen gemerkte Kontext-Infos vorhanden sind."
+    },
+    "servers": [
+      {
+        "url": "https://<your DB subdomain here>.upstash.io"
+      }
+    ],
+    "paths": {
+      "/set/{key}": {
+        "post": {
+          "operationId": "SetKeyValue",
+          "description": "Speichert einen Wert für den angegebenen Key.",
+          "parameters": [
+            {
+              "name": "key",
+              "in": "path",
+              "required": true,
+              "description": "Der Key, unter dem der Wert gespeichert wird.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "description": "Der Text, der gespeichert werden soll."
+                    },
+                    "expiration": {
+                      "type": "integer",
+                      "description": "Optional: Ablaufzeit in Sekunden."
+                    }
+                  },
+                  "required": ["value"]
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Der Wert wurde erfolgreich gespeichert.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "string",
+                          "example": "OK"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Ungültige Anfrage.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Nicht autorisiert.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/get/{key}": {
+        "get": {
+          "operationId": "GetValueByKey",
+          "description": "Ruft zu einem bestimmten, bekannten Schlüssen die gemerkten Kontext-Infos ab. Falls Schlüssel nicht genau bekannt, dann vorab GetAllKeys nutzen.",
+          "parameters": [
+            {
+              "name": "key",
+              "in": "path",
+              "required": true,
+              "description": "ein Key wie: ‚AdEx Partners Context‘, ‚Personal Context Dirk Schlossmacher‘.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Der Wert wurde erfolgreich abgerufen.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "result": {
+                        "type": "string",
+                        "example": "value"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Ungültige Anfrage.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Nicht autorisiert.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/keys/*": {
+        "get": {
+          "operationId": "GetAllKeys",
+          "description": "Zeigt alle Themen und zugehörige Schlüssel, zu denen gemerkte Kontext-Infos überhaupt vorhanden sind - sollte immer vorab genutzt werden, bevor `GetValueByKey` genutzt wird",
+          "responses": {
+            "200": {
+              "description": "Die Keys wurden erfolgreich abgerufen.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "keys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "example": ["User Name", "Session ID", "Preferences"]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Ungültige Anfrage.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Nicht autorisiert.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
