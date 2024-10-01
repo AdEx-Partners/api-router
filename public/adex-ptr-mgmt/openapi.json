@@ -1,0 +1,97 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AdEx Partner Management API",
+    "version": "1.0.0",
+    "description": "This API allows users to search through the AdEx Partner List, which includes agencies, technology providers, integration/service partners, and vendors. The Partner List provides detailed information about each partner, including their profiles, industry focus, and contact details. This tool is essential for managing partnerships and accessing important documents like NDAs and contract agreements."
+  },
+  "paths": {
+    "/search": {
+      "get": {
+        "summary": "Search AdEx Partner List",
+        "operationId": "searchAdExPartnerList",
+        "parameters": [
+          {
+            "name": "columns",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Columns to search in"
+          },
+          {
+            "name": "terms",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Search terms"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "x-column-descriptions": {
+    "Partner": "Name of the partner company.",
+    "Category": "Type of partnership, e.g., Consultancy, Vendor.",
+    "Partner profile": "Brief description of the partner.",
+    "Status": "Current status of the partnership.",
+    "More information": "Additional details about the partner.",
+    "Active exchange with the partner in the last year": "Indicates if there was active exchange.",
+    "Active business relationship (referral of an employee) in the last year": "Indicates if there was a business relationship.",
+    "Industry Focus": "Industries the partner is focused on.",
+    "Portfolio": "Services offered by the partner.",
+    "Functional Focus": "Functional areas the partner specializes in.",
+    "Partner Contact": "Contact person at the partner company.",
+    "Mail": "Email address of the contact person.",
+    "Phone": "Phone number of the contact person.",
+    "#Consultants": "Number of consultants available.",
+    "RfP": "Request for Proposal status.",
+    "Offer?": "Indicates if an offer is available.",
+    "ANÜ": "Temporary employment status.",
+    "AdEx Contact": "Contact person at AdEx.",
+    "Track Record": "Past performance and achievements.",
+    "Evaluation": "Evaluation status.",
+    "Last Update": "Date of the last update.",
+    "Repository": "Repository information."
+  }
+}
