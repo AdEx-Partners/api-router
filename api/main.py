@@ -47,7 +47,7 @@ def search(data, path_pattern=None, term_pattern=None, include_content=False):
         if total_words >= CAP_THRESHOLD:
             break
 
-        path_match = path_regex.search(item['page-url']) if path_regex else False
+        path_match = path_regex.search(item['page-url']) if path_regex else True
         term_match = False
 
         if term_regex:
@@ -57,7 +57,10 @@ def search(data, path_pattern=None, term_pattern=None, include_content=False):
                     term_matches += 1
                     break
 
-        if path_match or term_match:
+        # Ensure both path and term match if both are provided
+        if path_match and (not term_regex or term_match):
+            if path_match:
+                path_matches += 1
             if include_content:
                 results.append(item)
                 total_words += count_words(' '.join(e.get('text', '') for e in item['elements']))
@@ -65,6 +68,7 @@ def search(data, path_pattern=None, term_pattern=None, include_content=False):
                 results.append({"page-url": item['page-url']})
 
     return results, path_matches, term_matches
+
 
 @app.get("/search")
 async def search_endpoint(
