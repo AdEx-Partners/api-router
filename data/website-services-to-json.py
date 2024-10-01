@@ -69,7 +69,7 @@ def should_visit_url(url, base_url):
     parsed_base = urlparse(base_url)
     if parsed_url.netloc != parsed_base.netloc:
         return False
-    allowed_paths = ['news', 'team', 'services', 'industries']
+    allowed_paths = ['news', 'team', 'services', 'industries', 'corporate', 'contact']
     path_parts = parsed_url.path.strip('/').split('/')
     return len(path_parts) > 0 and path_parts[0] in allowed_paths
 
@@ -108,7 +108,7 @@ def backup_website_to_json(start_url, output_file):
             return
 """
 if __name__ == '__main__':
-    start_url = 'https://www.adexpartners.com/services/ai-transformation/'
+    start_url = 'https://www.adexpartners.com/'
     output_file = './website_backup.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write('[\n')
