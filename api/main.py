@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
-from typing import List, Optional
+from typing import Optional
 import json
 import os
 import re
@@ -66,41 +66,6 @@ def search(data, path_pattern=None, term_pattern=None, include_content=False):
 
     return results, path_matches, term_matches
 
-"""def search(data, path_pattern=None, term_pattern=None, include_content=False):
-    results = []
-    path_regex = re.compile(path_pattern) if path_pattern else None
-    term_regex = re.compile(term_pattern) if term_pattern else None
-    total_words = 0
-    path_matches = 0
-    term_matches = 0
-
-    for item in data:
-        if total_words >= CAP_THRESHOLD:
-            break
-
-        path_match = False
-        term_match = False
-
-        if path_regex and path_regex.search(item['page-url']):
-            path_match = True
-            path_matches += 1
-
-        if term_regex:
-            for element in item['elements']:
-                if any(term_regex.search(str(value)) for value in element.values()):
-                    term_match = True
-                    term_matches += 1
-                    break
-
-        if path_match or term_match:
-            if include_content:
-                results.append(item)
-                total_words += count_words(' '.join(e.get('text', '') for e in item['elements']))
-            else:
-                results.append({"page-url": item['page-url']})
-
-    return results, path_matches, term_matches"""
-
 @app.get("/search")
 async def search_endpoint(
     path: Optional[str] = Query(None, description="Path pattern to search for, use '|' as delimiter instead of '/'"),
@@ -130,3 +95,6 @@ async def search_endpoint(
         response["note"] = f"CAPPED RESPONSE - {CAP_THRESHOLD} words limit reached. Be more specific to ensure you receive the complete website contents matching your filter criteria."
 
     return response
+
+
+# local test: uvicorn main:app --reload
