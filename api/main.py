@@ -73,11 +73,15 @@ def search(data, path_pattern=None, term_pattern=None, include_content=False):
 @app.get("/search")
 async def search_endpoint(
     path: Optional[str] = Query(None, description="Path pattern to search for, use '|' as delimiter instead of '/'"),
+    webpath: Optional[str] = Query(None, description="Path pattern to search for, use '|' as delimiter instead of '/'"),
     term: Optional[str] = Query(None, description="Term pattern to search for"),
     include_content: bool = Query(False, description="Whether to include full content in the response")
 ):
-    if not path and not term:
+    if not webpath and not path and not term:
         raise HTTPException(status_code=400, detail="At least one of 'path' or 'term' must be specified.")
+
+    if webpath:
+        path = webpath
 
     # Replace '|' with '/' for path pattern
     if path:
@@ -92,7 +96,8 @@ async def search_endpoint(
         "results": results,
         "path_matches": path_matches,
         "term_matches": term_matches,
-        "capped": capped
+        "capped": capped,
+        "params": f"path: {path}, webpath: {webpath}, term: {term}"
     }
 
     if capped:

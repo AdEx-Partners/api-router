@@ -1,107 +1,110 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "AdEx adexpartners.com Website Search",
-      "version": "1.0.0",
-      "description": "API for searching adexpartners.com website content by terms matching content and/or page-url path. (currently limited to main pathes: news, team, services, industries)"  },
-    "servers": [
-      {
-        "url": "https://api-router-mu.vercel.app"
-      }
-    ],
-    "paths": {
-      "/search": {
-        "get": {
-          "summary": "Search website data",
-          "operationId": "adexpartnersComSearch",
-          "parameters": [
-            {
-              "name": "path",
-              "in": "query",
-              "description": "Path pattern to search for, use '|' as delimiter instead of '/'",
-              "required": false,
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "term",
-              "in": "query",
-              "description": "Term pattern to search for",
-              "required": false,
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "include_content",
-              "in": "query",
-              "description": "Whether to include page content in the response (not only matching page urls)",
-              "required": false,
-              "schema": {
-                "type": "boolean",
-                "default": false
-              }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AdEx adexpartners.com Website Search",
+    "version": "1.0.0",
+    "description": "API for searching adexpartners.com website content by terms matching content and/or page-url path. (currently limited to main pathes: news, team, services, industries)"  },
+  "servers": [
+    {
+      "url": "https://api-router-mu.vercel.app"
+    }
+  ],
+  "paths": {
+    "/search": {
+      "get": {
+        "summary": "Search website data",
+        "operationId": "adexpartnersComSearch",
+        "parameters": [
+          {
+            "name": "webpath",
+            "in": "query",
+            "description": "Path pattern to search for, use '|' as delimiter instead of '/'",
+            "required": false,
+            "schema": {
+              "type": "string"
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Search results",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "results": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "page-url": {
-                              "type": "string"
+          },
+          {
+            "name": "term",
+            "in": "query",
+            "description": "Term pattern to search for",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "include_content",
+            "in": "query",
+            "description": "Whether to include page content in the response (not only matching page urls)",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "page-url": {
+                            "type": "string"
+                          },
+                          "elements": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
                             },
-                            "elements": {
-                              "type": "array",
-                              "items": {
-                                "type": "object"
-                              },
-                              "nullable": true,
-                              "description": "Included if include_content is true"
-                            }
+                            "nullable": true,
+                            "description": "Included if include_content is true"
                           }
                         }
-                      },
-                      "path_matches": {
-                        "type": "integer",
-                        "description": "Number of path matches"
-                      },
-                      "term_matches": {
-                        "type": "integer",
-                        "description": "Number of term matches"
-                      },
-                      "capped": {
-                        "type": "boolean",
-                        "description": "Indicates if the response was capped due to too many matches, suggesting to narrow down the results with more specific search"
-                      },
-                      "note": {
-                        "type": "string",
-                        "description": "Additional note if response is capped"
                       }
+                    },
+                    "path_matches": {
+                      "type": "integer",
+                      "description": "Number of path matches"
+                    },
+                    "term_matches": {
+                      "type": "integer",
+                      "description": "Number of term matches"
+                    },
+                    "capped": {
+                      "type": "boolean",
+                      "description": "Indicates if the response was capped due to too many matches, suggesting to narrow down the results with more specific search"
+                    },
+                    "note": {
+                      "type": "string",
+                      "description": "Additional note if response is capped"
+                    },
+                    "params": {
+                      "type": "string",
+                      "description": "info on params received/processed by api"
                     }
                   }
                 }
               }
-            },
-            "400": {
-              "description": "Invalid request",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "detail": {
-                        "type": "string"
-                      }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string"
                     }
                   }
                 }
@@ -112,4 +115,4 @@
       }
     }
   }
-  
+}
