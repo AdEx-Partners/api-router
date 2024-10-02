@@ -2,76 +2,52 @@
   "openapi": "3.0.0",
   "info": {
     "title": "AdEx Partner Management API",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "This API allows users to search through the AdEx Partner List, which includes agencies, technology providers, integration/service partners, and vendors. The Partner List provides detailed information about each partner, including their profiles, industry focus, and contact details. This tool is essential for managing partnerships and accessing important documents like NDAs and contract agreements."
   },
   "servers": [
     {
-      "url": "https://api-router-mu.vercel.app/"
+      "url": "https://api-router-mu.vercel.app"
     }
-  ],  
+  ],
   "paths": {
-    "/adex-ptr-mgmt/search": {
+    "/excel_search": {
       "get": {
         "summary": "Search AdEx Partner List",
         "operationId": "searchAdExPartnerList",
         "parameters": [
           {
-            "name": "columns",
-            "in": "query",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "Partner",
-                  "Category",
-                  "Partner profile",
-                  "Status",
-                  "More information",
-                  "Active exchange with the partner in the last year",
-                  "Active business relationship (referral of an employee) in the last year",
-                  "Industry Focus",
-                  "Portfolio",
-                  "Functional Focus",
-                  "Partner Contact",
-                  "Mail",
-                  "Phone",
-                  "Consultants",
-                  "RfP",
-                  "Offer",
-                  "ANÜ",
-                  "AdEx Contact",
-                  "Track Record",
-                  "Evaluation",
-                  "Last Update",
-                  "Repository"
-                ]
-              }
-            },
-            "description": "Columns to search in. Refer to 'x-column-descriptions' for details on each column."
-          },
-          {
             "name": "terms",
             "in": "query",
             "required": true,
-            "style": "form",
-            "explode": true,
+            "description": "Search terms",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "description": "Search terms"
+              "type": "string",
+              "example": "exampleTerm1"
+            }
+          },
+          {
+            "name": "filter_column",
+            "in": "query",
+            "required": false,
+            "description": "Column to apply substring filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter_substring",
+            "in": "query",
+            "required": false,
+            "description": "Substring to filter the specified column",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful search",
             "content": {
               "application/json": {
                 "schema": {
@@ -80,104 +56,13 @@
                     "results": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "Partner": {
-                            "type": "string",
-                            "description": "Name of the partner company."
-                          },
-                          "Category": {
-                            "type": "string",
-                            "description": "Type of partnership, e.g., Consultancy, Vendor."
-                          },
-                          "Partner profile": {
-                            "type": "string",
-                            "description": "Brief description of the partner."
-                          },
-                          "Status": {
-                            "type": "string",
-                            "description": "Current status of the partnership."
-                          },
-                          "More information": {
-                            "type": "string",
-                            "description": "Additional details about the partner."
-                          },
-                          "Active exchange with the partner in the last year": {
-                            "type": "boolean",
-                            "description": "Indicates if there was active exchange."
-                          },
-                          "Active business relationship (referral of an employee) in the last year": {
-                            "type": "boolean",
-                            "description": "Indicates if there was a business relationship."
-                          },
-                          "Industry Focus": {
-                            "type": "string",
-                            "description": "Industries the partner is focused on."
-                          },
-                          "Portfolio": {
-                            "type": "string",
-                            "description": "Services offered by the partner."
-                          },
-                          "Functional Focus": {
-                            "type": "string",
-                            "description": "Functional areas the partner specializes in."
-                          },
-                          "Partner Contact": {
-                            "type": "string",
-                            "description": "Contact person at the partner company."
-                          },
-                          "Mail": {
-                            "type": "string",
-                            "format": "email",
-                            "description": "Email address of the contact person."
-                          },
-                          "Phone": {
-                            "type": "string",
-                            "description": "Phone number of the contact person."
-                          },
-                          "#Consultants": {
-                            "type": "integer",
-                            "description": "Number of consultants available."
-                          },
-                          "RfP": {
-                            "type": "string",
-                            "description": "Request for Proposal status."
-                          },
-                          "Offer?": {
-                            "type": "boolean",
-                            "description": "Indicates if an offer is available."
-                          },
-                          "ANÜ": {
-                            "type": "string",
-                            "description": "Temporary employment status."
-                          },
-                          "AdEx Contact": {
-                            "type": "string",
-                            "description": "Contact person at AdEx."
-                          },
-                          "Track Record": {
-                            "type": "string",
-                            "description": "Past performance and achievements."
-                          },
-                          "Evaluation": {
-                            "type": "string",
-                            "description": "Evaluation status."
-                          },
-                          "Last Update": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "Date of the last update."
-                          },
-                          "Repository": {
-                            "type": "string",
-                            "description": "Repository information."
-                          }
-                        },
-                        "required": ["Partner", "Category"]
+                        "type": "object"
                       }
+                    },
+                    "query": {
+                      "type": "string"
                     }
-                  },
-                  "required": ["results"]
+                  }
                 }
               }
             }
@@ -189,57 +74,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "type": "string"
-                        },
-                        "code": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message", "type", "param", "code"]
+                    "detail": {
+                      "type": "string"
                     }
-                  },
-                  "required": ["error"]
+                  }
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error",
+            "description": "Server error",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        },
-                        "param": {
-                          "type": "string"
-                        },
-                        "code": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message", "type", "param", "code"]
+                    "detail": {
+                      "type": "string"
                     }
-                  },
-                  "required": ["error"]
+                  }
                 }
               }
             }
@@ -247,30 +100,5 @@
         }
       }
     }
-  },
-  "components": {},
-  "x-column-descriptions": {
-    "Partner": "Name of the partner company.",
-    "Category": "Type of partnership, e.g., Consultancy, Vendor.",
-    "Partner profile": "Brief description of the partner.",
-    "Status": "Current status of the partnership.",
-    "More information": "Additional details about the partner.",
-    "Active exchange with the partner in the last year": "Indicates if there was active exchange.",
-    "Active business relationship (referral of an employee) in the last year": "Indicates if there was a business relationship.",
-    "Industry Focus": "Industries the partner is focused on.",
-    "Portfolio": "Services offered by the partner.",
-    "Functional Focus": "Functional areas the partner specializes in.",
-    "Partner Contact": "Contact person at the partner company.",
-    "Mail": "Email address of the contact person.",
-    "Phone": "Phone number of the contact person.",
-    "#Consultants": "Number of consultants available.",
-    "RfP": "Request for Proposal status.",
-    "Offer?": "Indicates if an offer is available.",
-    "ANÜ": "Temporary employment status.",
-    "AdEx Contact": "Contact person at AdEx.",
-    "Track Record": "Past performance and achievements.",
-    "Evaluation": "Evaluation status.",
-    "Last Update": "Date of the last update.",
-    "Repository": "Repository information."
   }
 }
