@@ -3,8 +3,11 @@ from typing import Optional
 import json
 import os
 import re
+from excel_search_api import router as excel_search_router
 
 app = FastAPI()
+
+app.include_router(excel_search_router, prefix="")
 
 # Load the JSON data
 data_path = os.path.join(os.path.dirname(__file__), '../data/website_backup.json')
@@ -69,7 +72,6 @@ def search(data, path_pattern=None, term_pattern=None, include_content=False):
 
     return results, path_matches, term_matches
 
-
 @app.get("/search")
 async def search_endpoint(
     path: Optional[str] = Query(None, description="Path pattern to search for, use '|' as delimiter instead of '/'"),
@@ -104,6 +106,3 @@ async def search_endpoint(
         response["note"] = f"CAPPED RESPONSE - {CAP_THRESHOLD} words limit reached. Be more specific to ensure you receive the complete website contents matching your filter criteria."
 
     return response
-
-
-# local test: uvicorn main:app --reload
