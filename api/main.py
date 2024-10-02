@@ -3,11 +3,12 @@ from typing import Optional
 import json
 import os
 import re
-from excel_search_api import router as excel_search_router
+from .excel_search_api import router as excel_search_router
+
 
 app = FastAPI()
 
-app.include_router(excel_search_router, prefix="")
+app.include_router(excel_search_router)
 
 # Load the JSON data
 data_path = os.path.join(os.path.dirname(__file__), '../data/website_backup.json')
