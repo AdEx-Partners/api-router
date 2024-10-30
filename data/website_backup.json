@@ -10416,5 +10416,27 @@
     }
   ],
   "links": []
+},
+{
+  "page-url": "https://www.adexpartners.com/not-existing/A",
+  "elements": [
+    {
+      "h1": "AdEx Prompting Best Practices"
+    },
+    {
+      "text": "Condensed knowledge from our AdEx colleagues"
+    },
+    {
+      "h2": "Structure brainstormed ideas based on flipchart photo"
+    },
+    {
+      "text": "Prompt 1: create a table with one row per each card that you can find:<br>- Category<br>- Action Item<br>- Responsible Team<br>- Deadline<br>- Card Color"
+    },
+    {
+      "text": "then, Prompt 2: 1. Prioritize Actions:<br>- Review all the notes and identify actionable items.<br>- Prioritize these actions based on importance and feasibility.<br><br>2. Assign Responsibilities:<br>- Assign each action item to a specific person or team.<br>- Set deadlines for each action item.<br><br>3. Create a Timeline:<br>- Develop a timeline for the implementation of the action<br>"
+    }
+  ],
+  "links": [
+  ]
 }
 ]
